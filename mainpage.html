@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniXepa - Delivery de Comida</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+        body {
+            font-family: "Roboto", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #af1ea6;
+            margin: 0;
+        }
+
+        .logo img {
+            height: 100px;
+            margin: 0;
+            position: relative;
+        }
+
+        .search-container {
+            display: flex;
+            flex-grow: 0.5;
+            /* Ajusta o crescimento */
+        }
+
+        .search-container input[type="text"] {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 1em;
+            flex-grow: 1;
+            /* Ocupa o espaço disponível */
+            min-width: 200px;
+            /* Largura mínima */
+        }
+
+        .search-container button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #af1ea6;
+            color: white;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #8e1885;
+        }
+
+        .user-nav a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            cursor: pointer;
+            /* Add cursor pointer for login/register */
+        }
+
+        .user-nav a.button {
+            background-color: #f1f1f1;
+            color: #af1ea6;
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid #af1ea6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .user-nav a.button:hover {
+            background-color: #af1ea6;
+            color: white;
+        }
+
+        /* User Logged Style */
+        .user-logged {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-greeting {
+            color: #333;
+            font-weight: 500;
+            font-size: 1em;
+        }
+
+        .user-logged a {
+            color: #af1ea6;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border: 1px solid #af1ea6;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .user-logged a:hover {
+            background-color: #af1ea6;
+            color: white;
+        }
+
+        /* Categories */
+        .categories {
+            padding: 30px 0;
+            background-color: #fff;
+            margin-top: 1px;
+            /* Separar do header */
+        }
+
+        .categories h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .category-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            /* Reduced gap slightly */
+            flex-wrap: wrap;
+        }
+
+        .category-item {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background-color: #fff;
+            color: #555;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease, color 0.3s ease,
+                border-color 0.3s ease, box-shadow 0.3s ease;
+            /* Added box-shadow transition */
+            white-space: nowrap;
+            /* Prevent wrapping */
+        }
+
+        .category-item:hover {
+            background-color: #f1f1f1;
+            border-color: #ccc;
+            color: #333;
+        }
+
+        .category-item.active {
+            /* Style for the active category */
+            background-color: #af1ea6;
+            color: white;
+            border-color: #af1ea6;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Restaurants & Special Offers */
+        .restaurants,
+        .special-offers {
+            padding: 40px 0;
+        }
+
+        .restaurants h2,
+        .special-offers h2 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        /* Use the same grid for both sections */
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            min-height: 150px;
+            /* Adjusted min-height */
+        }
+
+        .restaurant-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 150px;
+            /* Altura fixa para a imagem */
+            background-color: #eee;
+            /* Placeholder color */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .restaurant-card h3 {
+            font-size: 1.2em;
+            margin: 15px 15px 5px 15px;
+            color: #333;
+        }
+
+        .restaurant-card p {
+            font-size: 0.9em;
+            color: #666;
+            margin: 5px 15px;
+            line-height: 1.4;
+        }
+
+        .restaurant-card p:last-of-type {
+            /* Target last paragraph before offer tags container */
+            margin-bottom: 10px;
+        }
+
+        /* Offer Tags */
+        .offer-tags {
+            padding: 0 15px 10px 15px;
+            /* Padding around tags */
+            margin-top: auto;
+            /* Push tags to the bottom */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            min-height: 25px;
+        }
+
+        .offer-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .offer-tag.free-shipping {
+            background-color: #d4edda;
+            /* Light green background */
+            color: #155724;
+            /* Dark green text */
+            border: 1px solid #c3e6cb;
+        }
+
+        .offer-tag.discount {
+            background-color: #f3e5f9;
+            /* Light purple background */
+            color: #5a1a52;
+            /* Dark purple text */
+            border: 1px solid #d4b5e0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #e0e0e0;
+            color: #555;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            /* Keep margin from the last section */
+            font-size: 0.9em;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1050;
+            /* Above header */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1060;
+            /* Above overlay */
+            min-width: 300px;
+            max-width: 90%;
+        }
+
+        .modal-content {
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -15px;
+            /* Adjust position */
+            right: -20px;
+            /* Adjust position */
+            font-size: 2em;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .modal form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .modal form input[type="text"],
+        .modal form input[type="email"],
+        .modal form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            /* Include padding in width */
+            font-size: 1em;
+        }
+
+        .modal form button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #af1ea6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .modal form button[type="submit"]:hover {
+            background-color: #8e1885;
+        }
+
+        /* Responsividade básica */
+        @media (max-width: 768px) {
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-container {
+                width: 100%;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                flex-grow: 1;
+            }
+
+            .search-container input[type="text"] {
+                min-width: 0;
+                /* Remove min-width on smaller screens */
+            }
+
+            .user-nav {
+                margin-top: 10px;
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+            }
+
+            .user-nav a {
+                margin-left: 0;
+            }
+
+            .restaurant-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .category-list {
+                justify-content: flex-start;
+                /* Align categories left */
+                overflow-x: auto;
+                /* Allow horizontal scroll if needed */
+                padding-bottom: 10px;
+                /* Space for scrollbar */
+            }
+
+            .modal {
+                padding: 20px;
+                width: 90%;
+            }
+
+            .close-btn {
+                top: -10px;
+                right: -10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5em;
+            }
+
+            .search-container input[type="text"],
+            .search-container button {
+                font-size: 0.9em;
+                padding: 8px 10px;
+            }
+
+            .user-nav a {
+                font-size: 0.9em;
+            }
+
+            .user-nav a.button {
+                padding: 6px 12px;
+            }
+
+            .restaurant-grid {
+                grid-template-columns: 1fr;
+                /* Uma coluna em telas muito pequenas */
+            }
+
+            .restaurant-card h3 {
+                font-size: 1.1em;
+            }
+
+            .restaurant-card p {
+                font-size: 0.85em;
+            }
+
+            .category-item {
+                padding: 8px 15px;
+                font-size: 0.8em;
+            }
+
+            .offer-tag {
+                font-size: 0.75em;
+                padding: 2px 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="Uni-Xepa Logo.png" alt="Uni-Xepa Logo">
+            </div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Buscar restaurantes ou itens...">
+                <button id="search-button">Buscar</button>
+            </div>
+            <div class="user-logged">
+                <i class="fas fa-user"></i>
+                <span class="user-greeting">Olá, Luiz!</span>
+                <a href="loginpage.html" id="logout-btn">Sair</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="categories">
+        <div class="container">
+            <h2>Categorias</h2>
+            <div class="category-list" id="category-list">
+                <button class="category-item active" data-category="all">Todos</button>
+                <button class="category-item" data-category="Pizza">Pizza</button>
+                <button class="category-item" data-category="Hambúrguer">Hambúrguer</button>
+                <button class="category-item" data-category="Japonesa">Japonesa</button>
+                <button class="category-item" data-category="Brasileira">Brasileira</button>
+                <button class="category-item" data-category="Sobremesas">Sobremesas</button>
+                <button class="category-item" data-category="Bebidas">Bebidas</button>
+                <button class="category-item" data-category="Mercado">Mercado</button>
+                <button class="category-item" data-category="Variada">Variada</button>
+                <button class="category-item" data-category="Lanches">Lanches</button>
+                <button class="category-item" data-category="Italiana">Italiana</button>
+            </div>
+        </div>
+    </section>
+
+    <main class="restaurants">
+        <div class="container">
+            <h2>Restaurantes Populares</h2>
+            <div class="restaurant-grid" id="popular-restaurants-grid">
+                <!-- Restaurant cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <section class="special-offers">
+        <div class="container">
+            <h2>Ofertas Especiais</h2>
+            <div class="restaurant-grid" id="special-offers-grid">
+                <!-- Offer cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 UniXepa. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Template for Restaurant Card -->
+    <template id="restaurant-card-template">
+        <div class="restaurant-card" data-id="">
+            <div class="card-image placeholder">
+                Imagem
+            </div>
+            <h3 class="card-name">Nome do Restaurante</h3>
+            <p class="card-info"><span class="card-type">Tipo</span> - <span class="card-price">$$</span></p>
+            <p class="card-rating">⭐ <span class="rating-value">0.0</span> (<span class="review-count">0</span>+)</p>
+            <p class="card-time">00-00 min</p>
+            <div class="offer-tags">
+                <!-- Offer tags will be added dynamically here -->
+            </div>
+        </div>
+    </template>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal="login-modal">&times;</span>
+            <h2>Entrar</h2>
+            <form id="login-form">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="email" required>
+                <label for="login-password">Senha:</label>
+                <input type="password" id="login-password" name="password" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal="register-modal">&times;</span>
+            <h2>Cadastrar</h2>
+            <form id="register-form">
+                <label for="register-name">Nome:</label>
+                <input type="text" id="register-name" name="name" required>
+                <label for="register-email">Email:</label>
+                <input type="email" id="register-email" name="email" required>
+                <label for="register-password">Senha:</label>
+                <input type="password" id="register-password" name="password" required>
+                <label for="register-confirm-password">Confirmar Senha:</label>
+                <input type="password" id="register-confirm-password" name="confirm_password" required>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const popularRestaurantsData = [
+            { id: 1, image: null, name: "Apetits", type: "Tipo de Comida", price: "$$", rating: 4.5, reviews: "1k+", time: "30-45 min", offers: [] },
+            { id: 2, image: null, name: "Pizzaria Delícia", type: "Pizza", price: "$$$", rating: 4.8, reviews: "500+", time: "40-55 min", offers: [] },
+            { id: 3, image: null, name: "Burger Mania", type: "Hambúrguer", price: "$$", rating: 4.2, reviews: "2k+", time: "25-40 min", offers: [] },
+            { id: 4, image: null, name: "Sushi House", type: "Japonesa", price: "$$$$", rating: 4.9, reviews: "800+", time: "50-65 min", offers: [] }
+        ];
+
+        const specialOffersData = [
+            { id: 5, image: null, name: "Restaurante Bom Preço", type: "Variada", price: "$$", rating: 4.3, reviews: "300+", time: "35-50 min", offers: [{ type: "free-shipping", text: "Frete Grátis" }] },
+            { id: 6, image: null, name: "Cantinho do Sabor", type: "Brasileira", price: "$", rating: 4.6, reviews: "750+", time: "45-60 min", offers: [{ type: "discount", text: "15% OFF" }] },
+            { id: 7, image: null, name: "Super Lanches", type: "Lanches", price: "$$", rating: 4.0, reviews: "1.5k+", time: "20-35 min", offers: [{ type: "free-shipping", text: "Frete Grátis" }, { type: "discount", text: "Combo Especial" }] },
+            { id: 8, image: null, name: "Massa Express", type: "Italiana", price: "$$$", rating: 4.7, reviews: "400+", time: "40-55 min", offers: [{ type: "free-shipping", text: "Frete Grátis" }] }
+        ];
+
+        const allRestaurants = [...popularRestaurantsData, ...specialOffersData];
+
+        // --- State ---
+        let currentCategory = 'all';
+        let currentSearchTerm = '';
+
+        // --- DOM Elements ---
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const popularGrid = document.getElementById('popular-restaurants-grid');
+        const offersGrid = document.getElementById('special-offers-grid');
+        const cardTemplate = document.getElementById('restaurant-card-template');
+        const categoryList = document.getElementById('category-list');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const loginModal = document.getElementById('login-modal');
+        const registerModal = document.getElementById('register-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const closeButtons = document.querySelectorAll('.close-btn');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+
+        // --- Functions ---
+        function createRestaurantCard(restaurantData) {
+            const cardClone = cardTemplate.content.cloneNode(true);
+            const cardElement = cardClone.querySelector('.restaurant-card');
+
+            cardElement.dataset.id = restaurantData.id;
+            cardElement.dataset.type = restaurantData.type;
+
+            cardElement.querySelector('.card-name').textContent = restaurantData.name;
+            cardElement.querySelector('.card-type').textContent = restaurantData.type;
+            cardElement.querySelector('.card-price').textContent = restaurantData.price;
+            cardElement.querySelector('.rating-value').textContent = restaurantData.rating;
+            cardElement.querySelector('.review-count').textContent = restaurantData.reviews;
+            cardElement.querySelector('.card-time').textContent = restaurantData.time;
+
+            const imagePlaceholder = cardElement.querySelector('.card-image');
+            if (restaurantData.image) {
+                imagePlaceholder.textContent = '';
+            } else {
+                imagePlaceholder.textContent = 'Imagem Indisponível';
+            }
+
+            const offerTagsContainer = cardElement.querySelector('.offer-tags');
+            offerTagsContainer.innerHTML = '';
+            restaurantData.offers.forEach(offer => {
+                const tag = document.createElement('span');
+                tag.classList.add('offer-tag', offer.type);
+                tag.textContent = offer.text;
+                offerTagsContainer.appendChild(tag);
+            });
+
+            return cardElement;
+        }
+
+        function renderRestaurants(restaurants, containerElement) {
+            containerElement.innerHTML = '';
+            if (restaurants.length === 0) {
+                containerElement.innerHTML = '<p>Nenhum restaurante encontrado para esta seleção.</p>';
+                return;
+            }
+            restaurants.forEach(restaurant => {
+                const card = createRestaurantCard(restaurant);
+                containerElement.appendChild(card);
+            });
+        }
+
+        function filterRestaurants(searchTerm, category, dataSet) {
+            const lowerCaseTerm = searchTerm.toLowerCase().trim();
+
+            return dataSet.filter(restaurant => {
+                const categoryMatch = category === 'all' || restaurant.type.toLowerCase() === category.toLowerCase();
+                const searchMatch = !lowerCaseTerm ||
+                    restaurant.name.toLowerCase().includes(lowerCaseTerm) ||
+                    restaurant.type.toLowerCase().includes(lowerCaseTerm);
+
+                return categoryMatch && searchMatch;
+            });
+        }
+
+        function handleFilterAndSearch() {
+            currentSearchTerm = searchInput.value;
+            const filteredPopular = filterRestaurants(currentSearchTerm, currentCategory, popularRestaurantsData);
+            const filteredOffers = filterRestaurants(currentSearchTerm, currentCategory, specialOffersData);
+
+            renderRestaurants(filteredPopular, popularGrid);
+            renderRestaurants(filteredOffers, offersGrid);
+        }
+
+        function updateActiveCategoryButton(selectedCategory) {
+            document.querySelectorAll('.category-item').forEach(button => {
+                if (button.dataset.category.toLowerCase() === selectedCategory.toLowerCase()) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+                modalOverlay.style.display = 'block';
+            }
+        }
+
+        function closeModal() {
+            loginModal.style.display = 'none';
+            registerModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        }
+
+        // --- Event Listeners ---
+        searchButton.addEventListener('click', handleFilterAndSearch);
+        searchInput.addEventListener('input', handleFilterAndSearch);
+
+        categoryList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('category-item')) {
+                const selectedCategory = event.target.dataset.category;
+                currentCategory = selectedCategory;
+                updateActiveCategoryButton(selectedCategory);
+                handleFilterAndSearch();
+            }
+        });
+
+        function handleCardClick(event) {
+            const card = event.target.closest('.restaurant-card');
+            if (card) {
+                const restaurantName = card.querySelector('h3.card-name').textContent;
+                const restaurantId = card.dataset.id;
+                alert(`Você clicou no restaurante: ${restaurantName} (ID: ${restaurantId || 'N/A'})`);
+            }
+        }
+
+        popularGrid.addEventListener('click', handleCardClick);
+        offersGrid.addEventListener('click', handleCardClick);
+
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal('login-modal');
+        });
+
+        registerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal('register-modal');
+        });
+
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                closeModal();
+            });
+        });
+
+        modalOverlay.addEventListener('click', closeModal);
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('Login form submitted:');
+            console.log('Email:', document.getElementById('login-email').value);
+            alert('Tentativa de login (ver console).');
+            closeModal();
+            loginForm.reset();
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+
+            console.log('Register form submitted:');
+            console.log('Nome:', document.getElementById('register-name').value);
+            console.log('Email:', document.getElementById('register-email').value);
+            alert('Tentativa de cadastro (ver console).');
+            closeModal();
+            registerForm.reset();
+        });
+
+        // --- Initial Page Load ---
+        console.log("UniXepa page loaded. Rendering initial restaurants.");
+        updateActiveCategoryButton(currentCategory);
+        handleFilterAndSearch();
+    </script>
+</body>
+
+</html>
